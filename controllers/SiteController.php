@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\UploadForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -9,6 +10,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use yii\web\UploadedFile;
 
 class SiteController extends Controller
 {
@@ -61,7 +63,22 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $model = new UploadForm();
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $model->file = UploadedFile::getInstance($model,'file');
+            $fileName = $model->file->getBaseName() . "." . $model->file->getExtension();
+            $filePath = "@webroot/uploads/" . $fileName;
+            $model->file->saveAs(\Yii::getAlias($filePath));
+
+//            return $this->redirect(['about']);
+//           $model->showFile();
+        }
+        return $this->render('index', [
+            'model' => $model,
+        ]);
+
+//        return $this->render('index');
     }
 
     /**
