@@ -70,8 +70,9 @@ class SiteController extends Controller
             $fileName = $model->file->getBaseName() . "." . $model->file->getExtension();
             $filePath = "@webroot/uploads/" . $fileName;
             $model->file->saveAs(\Yii::getAlias($filePath));
-
-//            return $this->redirect(['about']);
+//            $xml = simplexml_load_file(\Yii::getAlias($filePath));
+//            var_dump($xml);
+            return $this->redirect(['about']);
 //           $model->showFile();
         }
         return $this->render('index', [
@@ -140,6 +141,10 @@ class SiteController extends Controller
      */
     public function actionAbout()
     {
-        return $this->render('about');
+        $xml = simplexml_load_file(\Yii::getAlias("@webroot/uploads/" . "goods.xml"));
+//        var_dump($xml);
+        return $this->render('about', [
+            'xml' => $xml,
+        ]);
     }
 }

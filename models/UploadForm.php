@@ -30,13 +30,15 @@ class UploadForm extends Model
         ];
     }
 
-    public function showFile($uploadFile)
+    public function showFile()
     {
 
         $model->file = UploadedFile::getInstance($model,'file');
         $fileName = $model->file->getBaseName() . "." . $model->file->getExtension();
         $filePath = "@webroot/uploads/" . $fileName;
         $model->file->saveAs(\Yii::getAlias($filePath));
+//        $xml = simplexml_load_file(\Yii::getAlias($filePath));
+//        print_r($xml);
 //        $upload = UploadedFile::getInstance($model, 'file');
 //        $fileName = $this->file->getBaseName() . "." . $this->file->getExtension();
 //        $filePath = "@webroot/uploads/" . $fileName;
