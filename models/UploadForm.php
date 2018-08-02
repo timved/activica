@@ -10,7 +10,7 @@ namespace app\models;
 
 
 use yii\base\Model;
-use yii\web\UploadedFile;
+use app\models\tables\Offer;
 
 class UploadForm extends Model
 {
@@ -32,19 +32,36 @@ class UploadForm extends Model
 
     public function showFile()
     {
-
-        $model->file = UploadedFile::getInstance($model,'file');
-        $fileName = $model->file->getBaseName() . "." . $model->file->getExtension();
+        $fileName = $this->file->getBaseName() . "." . $this->file->getExtension();
         $filePath = "@webroot/uploads/" . $fileName;
-        $model->file->saveAs(\Yii::getAlias($filePath));
-//        $xml = simplexml_load_file(\Yii::getAlias($filePath));
-//        print_r($xml);
-//        $upload = UploadedFile::getInstance($model, 'file');
-//        $fileName = $this->file->getBaseName() . "." . $this->file->getExtension();
-//        $filePath = "@webroot/uploads/" . $fileName;
-//        $this->file->saveAs(\Yii::getAlias($filePath));
-//        $xml = simplexml_load_file($upload);
-//        var_dump($xml);
+        $this->file->saveAs(\Yii::getAlias($filePath));
+        $xml = simplexml_load_file(\Yii::getAlias($filePath));
+
+        foreach ($xml->shop->offers->offer as $item) {
+
+            $offer = new Offer();
+
+            $offer->offer_id = (int)$item['id'];
+            $offer->offer_available = (string)$item['available'];
+            $offer->url = (string)$item->url;
+            $offer->price = (float)($item->price);
+
+            $offer->optprice = (float)$item->optprice;
+            $offer->category_id = (int)$item->categoryId;
+            $offer->picture = (string)$item->picture;
+            $offer->name = (string)$item->name;
+            $offer->articul = (string)$item->articul;
+            $offer->vendor = (string)$item->vendor;
+
+            $offer->description = (string)$item->extprops->name . "\n" . (string)$item->extprops->season;
+
+            $offer->status_new = (string)$item->statusNew;
+            $offer->status_action = (string)$item->statusAction;
+            $offer->status_top = (string)$item->statusTop;
+
+            $offer->save();
+        }
+
     }
 
 }
